@@ -1,0 +1,28 @@
+{
+  "name": "@autoapply/workers",
+  "version": "1.0.0",
+  "description": "AutoApply AI Dedicated Background Worker Engine",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node ../node_modules/typescript/bin/tsc",
+    "start": "node dist/index.js",
+    "dev": "node --max-old-space-size=1024 ../node_modules/tsx/dist/cli.mjs watch --exclude \"**/node_modules/**\" src/index.ts",
+    "test": "node ../node_modules/vitest/vitest.mjs run"
+  },
+  "dependencies": {
+    "@autoapply/shared": "*",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.9.5",
+    "nodemailer": "^6.10.0",
+    "openai": "^4.85.4",
+    "playwright": "^1.50.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/nodemailer": "^6.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

@@ -1,0 +1,38 @@
+# Multi-stage Dockerfile for AutoApply AI Dedicated Background Workers
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+# Copy package manifests
+COPY package.json package-lock.json ./
+COPY shared/package.json ./shared/
+COPY server/package.json ./server/
+COPY workers/package.json ./workers/
+COPY client/package.json ./client/
+
+RUN npm ci
+
+# Copy sources
+COPY shared/ ./shared/
+COPY workers/ ./workers/
+
+# Build shared & workers
+RUN npm run build:shared
+RUN npm run build:workers
+
+# Production runtime stage
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package.json package-lock.json ./
+COPY shared/package.json ./shared/
+COPY workers/package.json ./workers/
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/shared/dist ./shared/dist
+COPY --from=builder /app/workers/dist ./workers/dist
+
+CMD ["node", "workers/dist/index.js"]
+

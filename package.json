@@ -1,0 +1,29 @@
+{
+  "name": "autoapply-ai",
+  "version": "1.0.0",
+  "description": "AutoApply AI - Autonomous AI Job Hunter & Application Automation Platform",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "server",
+    "workers",
+    "client"
+  ],
+  "scripts": {
+    "build:shared": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc --project shared/tsconfig.json",
+    "build:server": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc --project server/tsconfig.json",
+    "build:workers": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc --project workers/tsconfig.json",
+    "build:client": "node ./node_modules/vite/bin/vite.js build --config client/vite.config.ts client",
+    "build": "npm run build:shared && npm run build:server && npm run build:workers && npm run build:client",
+    "start": "node server/dist/index.js",
+    "dev": "node ./node_modules/concurrently/dist/bin/concurrently.js -k -n \"server,workers,client\" -c \"blue,green,magenta\" \"npm run dev:server\" \"npm run dev:workers\" \"npm run dev:client\"",
+    "dev:server": "node --max-old-space-size=1024 ./node_modules/tsx/dist/cli.mjs watch --exclude \"**/node_modules/**\" server/src/index.ts",
+    "dev:workers": "node --max-old-space-size=1024 ./node_modules/tsx/dist/cli.mjs watch --exclude \"**/node_modules/**\" workers/src/index.ts",
+    "dev:client": "node ./node_modules/vite/bin/vite.js --config client/vite.config.ts client",
+    "test": "node ./node_modules/vitest/vitest.mjs run --config server/vitest.config.ts && node ./node_modules/vitest/vitest.mjs run --config workers/vitest.config.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.7.3"
+  }
+}

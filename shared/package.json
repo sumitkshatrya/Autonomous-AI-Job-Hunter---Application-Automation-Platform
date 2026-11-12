@@ -1,0 +1,17 @@
+{
+  "name": "@autoapply/shared",
+  "version": "1.0.0",
+  "description": "Shared types, schemas, and utilities for AutoApply AI",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "node ../node_modules/typescript/bin/tsc",
+    "watch": "node ../node_modules/typescript/bin/tsc -w"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

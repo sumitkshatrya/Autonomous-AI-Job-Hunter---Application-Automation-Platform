@@ -1,0 +1,51 @@
+name: AutoApply AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Monorepo Dependencies
+        run: npm ci
+
+      - name: Build Shared Types and Schemas
+        run: npm run build:shared
+
+      - name: Run Test Suite (Unit, Integration, Security, Connectors)
+        run: npm run test
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/autoapply-test
+          JWT_SECRET: ci_test_secret_key_autoapply_2026
+          ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+      - name: Build Server
+        run: npm run build:server
+
+      - name: Build Background Workers
+        run: npm run build:workers
+
+      - name: Build Frontend Client (Vite Production Bundle)
+        run: npm run build:client
+
