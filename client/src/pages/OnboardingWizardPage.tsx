@@ -366,7 +366,7 @@ export const OnboardingWizardPage: React.FC = () => {
 
         {/* Step 1: Upload */}
         {step === 1 && (
-          <div className="p-8 rounded-3xl border border-slate-800 bg-[#0d121f] text-center space-y-6">
+          <div className="p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 bg-[#0d121f] text-center space-y-6">
             <div className="max-w-md mx-auto space-y-2">
               <h2 className="text-xl font-bold text-white">Upload Your Resume (PDF / DOCX)</h2>
               <p className="text-xs text-slate-400">
@@ -1219,7 +1219,7 @@ export const OnboardingWizardPage: React.FC = () => {
 
         {/* Step 3: Setup & Launch */}
         {step === 3 && (
-          <div className="p-8 rounded-3xl border border-slate-800 bg-[#0d121f] text-center space-y-6">
+          <div className="p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 bg-[#0d121f] text-center space-y-6">
             <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
               <CheckCircle2 className="w-7 h-7" />
             </div>

@@ -45,7 +45,7 @@ export const OverviewPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
       {/* Welcome Banner */}
       <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-900/30 via-slate-900 to-indigo-950/40 border border-blue-500/20 relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
@@ -173,35 +173,37 @@ export const OverviewPage: React.FC = () => {
                 No applications submitted yet. Ready to submit qualified jobs automatically.
               </div>
             ) : (
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-900/80 text-slate-400 font-semibold border-b border-slate-800">
-                  <tr>
-                    <th className="p-3.5">Company & Role</th>
-                    <th className="p-3.5">Method</th>
-                    <th className="p-3.5">Status</th>
-                    <th className="p-3.5">Updated</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60">
-                  {recentApps.map((app) => (
-                    <tr key={app._id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="p-3.5">
-                        <div className="font-bold text-slate-200">{app.jobId?.title || 'Engineer'}</div>
-                        <div className="text-[11px] text-slate-500">{app.jobId?.company || 'Company'}</div>
-                      </td>
-                      <td className="p-3.5 text-slate-400 font-mono text-[11px]">
-                        {app.submissionMethod}
-                      </td>
-                      <td className="p-3.5">
-                        <StatusPill status={app.status} />
-                      </td>
-                      <td className="p-3.5 text-slate-500 text-[11px]">
-                        {new Date(app.updatedAt).toLocaleDateString()}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs min-w-[500px]">
+                  <thead className="bg-slate-900/80 text-slate-400 font-semibold border-b border-slate-800">
+                    <tr>
+                      <th className="p-3.5">Company & Role</th>
+                      <th className="p-3.5">Method</th>
+                      <th className="p-3.5">Status</th>
+                      <th className="p-3.5">Updated</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60">
+                    {recentApps.map((app) => (
+                      <tr key={app._id} className="hover:bg-slate-800/30 transition-colors">
+                        <td className="p-3.5">
+                          <div className="font-bold text-slate-200">{app.jobId?.title || 'Engineer'}</div>
+                          <div className="text-[11px] text-slate-500">{app.jobId?.company || 'Company'}</div>
+                        </td>
+                        <td className="p-3.5 text-slate-400 font-mono text-[11px]">
+                          {app.submissionMethod}
+                        </td>
+                        <td className="p-3.5">
+                          <StatusPill status={app.status} />
+                        </td>
+                        <td className="p-3.5 text-slate-500 text-[11px]">
+                          {new Date(app.updatedAt).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         </div>

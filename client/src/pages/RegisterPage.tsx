@@ -47,7 +47,7 @@ export const RegisterPage: React.FC = () => {
         </div>
 
         {/* Card */}
-        <div className="p-8 rounded-3xl border border-slate-800 bg-[#0d121f]/90 shadow-2xl backdrop-blur-xl space-y-5">
+        <div className="p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 bg-[#0d121f]/90 shadow-2xl backdrop-blur-xl space-y-5">
           <h2 className="text-base font-bold text-white">Create Your Account</h2>
 
           {error && (

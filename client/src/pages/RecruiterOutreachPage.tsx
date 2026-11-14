@@ -59,7 +59,7 @@ export const RecruiterOutreachPage: React.FC = () => {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -77,7 +77,7 @@ export const RecruiterOutreachPage: React.FC = () => {
       </div>
 
       {/* Discover Recruiter Bar */}
-      <form onSubmit={handleDiscoverRecruiters} className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center gap-3">
+      <form onSubmit={handleDiscoverRecruiters} className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
         <input
           type="text"
           value={discoverCompany}
@@ -88,7 +88,7 @@ export const RecruiterOutreachPage: React.FC = () => {
         <button
           type="submit"
           disabled={isDiscovering || !discoverCompany}
-          className="btn btn-sm btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2 text-xs font-semibold h-9 px-4"
+          className="btn btn-sm btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded-lg gap-2 text-xs font-semibold h-9 px-4 justify-center"
         >
           <UserPlus className={`w-3.5 h-3.5 ${isDiscovering ? 'animate-spin' : ''}`} />
           <span>{isDiscovering ? 'Searching Public Directories...' : 'Find Recruiters'}</span>

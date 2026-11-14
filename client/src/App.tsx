@@ -25,6 +25,12 @@ import { OnboardingWizardPage } from './pages/OnboardingWizardPage';
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  // Close mobile sidebar on page navigation
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const getPageInfo = () => {
     switch (location.pathname) {
@@ -68,10 +74,14 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { title, subtitle } = getPageInfo();
 
   return (
-    <div className="flex min-h-screen bg-[#0a0d14]">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Navbar title={title} subtitle={subtitle} />
+    <div className="flex min-h-screen bg-[#0a0d14] relative overflow-x-hidden">
+      <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+      <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden">
+        <Navbar
+          title={title}
+          subtitle={subtitle}
+          onToggleSidebar={() => setIsMobileMenuOpen((prev) => !prev)}
+        />
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
     </div>

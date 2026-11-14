@@ -45,7 +45,7 @@ export const ApplicationsPage: React.FC = () => {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -83,59 +83,61 @@ export const ApplicationsPage: React.FC = () => {
         </div>
       ) : (
         <div className="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-900/80 text-slate-400 font-semibold border-b border-slate-800">
-              <tr>
-                <th className="p-4">Target Role & Company</th>
-                <th className="p-4">Submission Adapter</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">Confirmation ID</th>
-                <th className="p-4">Timeline / Date</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {applications.map((app) => (
-                <tr key={app._id} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="p-4">
-                    <div className="font-bold text-slate-200">{app.jobId?.title || 'Engineer'}</div>
-                    <div className="text-[11px] text-slate-500 font-medium">{app.jobId?.company}</div>
-                  </td>
-                  <td className="p-4 text-slate-400 font-mono text-[11px]">
-                    {app.submissionMethod}
-                  </td>
-                  <td className="p-4">
-                    <StatusPill status={app.status} />
-                  </td>
-                  <td className="p-4 font-mono text-[11px] text-slate-400">
-                    {app.submissionResult?.confirmationId || '—'}
-                  </td>
-                  <td className="p-4 text-slate-500 text-[11px]">
-                    {new Date(app.updatedAt).toLocaleDateString()}
-                  </td>
-                  <td className="p-4 text-right space-x-2">
-                    <button
-                      onClick={() => setSelectedApp(app)}
-                      className="btn btn-xs btn-ghost text-slate-300 hover:text-white rounded-lg"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Inspect</span>
-                    </button>
-                    {app.status === 'ready' && (
-                      <button
-                        onClick={() => handleSubmitApp(app._id)}
-                        disabled={isSubmitting}
-                        className="btn btn-xs btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Submit</span>
-                      </button>
-                    )}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs min-w-[700px]">
+              <thead className="bg-slate-900/80 text-slate-400 font-semibold border-b border-slate-800">
+                <tr>
+                  <th className="p-4">Target Role & Company</th>
+                  <th className="p-4">Submission Adapter</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4">Confirmation ID</th>
+                  <th className="p-4">Timeline / Date</th>
+                  <th className="p-4 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {applications.map((app) => (
+                  <tr key={app._id} className="hover:bg-slate-800/30 transition-colors">
+                    <td className="p-4">
+                      <div className="font-bold text-slate-200">{app.jobId?.title || 'Engineer'}</div>
+                      <div className="text-[11px] text-slate-500 font-medium">{app.jobId?.company}</div>
+                    </td>
+                    <td className="p-4 text-slate-400 font-mono text-[11px]">
+                      {app.submissionMethod}
+                    </td>
+                    <td className="p-4">
+                      <StatusPill status={app.status} />
+                    </td>
+                    <td className="p-4 font-mono text-[11px] text-slate-400">
+                      {app.submissionResult?.confirmationId || '—'}
+                    </td>
+                    <td className="p-4 text-slate-500 text-[11px]">
+                      {new Date(app.updatedAt).toLocaleDateString()}
+                    </td>
+                    <td className="p-4 text-right space-x-2">
+                      <button
+                        onClick={() => setSelectedApp(app)}
+                        className="btn btn-xs btn-ghost text-slate-300 hover:text-white rounded-lg"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Inspect</span>
+                      </button>
+                      {app.status === 'ready' && (
+                        <button
+                          onClick={() => handleSubmitApp(app._id)}
+                          disabled={isSubmitting}
+                          className="btn btn-xs btn-primary bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Submit</span>
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

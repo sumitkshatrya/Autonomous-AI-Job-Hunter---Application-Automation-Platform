@@ -47,7 +47,7 @@ export const WhatsAppCenterPage: React.FC = () => {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -145,18 +145,18 @@ export const WhatsAppCenterPage: React.FC = () => {
         <p className="text-xs text-slate-400">
           Verify end-to-end webhook delivery by dispatching a sample interview notification to your verified recipient number.
         </p>
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2">
           <input
             type="text"
             value={testPhone}
             onChange={(e) => setTestPhone(e.target.value)}
-            placeholder="+15551234567"
-            className="w-64 bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-xs text-slate-200"
+            placeholder="+919528865099"
+            className="w-full sm:w-64 bg-slate-950 border border-slate-800 rounded-lg px-3.5 py-2 text-xs text-slate-200"
           />
           <button
             onClick={handleSendTest}
             disabled={sendingTest}
-            className="btn btn-sm btn-primary bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg gap-2 text-xs font-semibold"
+            className="btn btn-sm btn-primary bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg gap-2 text-xs font-semibold justify-center"
           >
             <Send className={`w-3.5 h-3.5 ${sendingTest ? 'animate-spin' : ''}`} />
             <span>{sendingTest ? 'Dispatching...' : 'Send WhatsApp Alert'}</span>
