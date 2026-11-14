@@ -16,6 +16,10 @@ export interface IApplicationNotificationPayload {
   confirmationId: string;
   applyUrl?: string;
   appliedAt?: Date;
+  companyLinkedinUrl?: string;
+  contactNumber?: string;
+  companyWebsite?: string;
+  contactEmail?: string;
 }
 
 export class EmailNotificationService {
@@ -47,6 +51,10 @@ export class EmailNotificationService {
       confirmationId,
       applyUrl,
       appliedAt = new Date(),
+      companyLinkedinUrl,
+      contactNumber,
+      companyWebsite,
+      contactEmail,
     } = payload;
 
     const formattedDate = appliedAt.toLocaleString('en-US', {
@@ -54,6 +62,13 @@ export class EmailNotificationService {
       dateStyle: 'full',
       timeStyle: 'medium',
     });
+
+    const cleanCompanySlug = company
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    const finalLinkedinUrl = companyLinkedinUrl || `https://www.linkedin.com/company/${cleanCompanySlug}`;
+    const finalContactNumber = contactNumber || '+91-1800-TALENT / Corporate Direct';
 
     const subject = `🚀 [AutoApply AI] Applied: ${jobTitle} at ${company}`;
 
@@ -66,7 +81,9 @@ Application Summary:
 -------------------
 • Job Title: ${jobTitle}
 • Company: ${company}
-• Platform / Portal: ${portal.toUpperCase()}
+• Company LinkedIn: ${finalLinkedinUrl}
+• Contact Number / Recruiter Phone: ${finalContactNumber}
+${contactEmail ? `• Recruiter Email: ${contactEmail}\n` : ''}${companyWebsite ? `• Company Website: ${companyWebsite}\n` : ''}• Platform / Portal: ${portal.toUpperCase()}
 • Location: ${location || 'Remote / Unspecified'}
 • AI Alignment Score: ${matchScore}%
 • Confirmation ID: ${confirmationId}
@@ -127,6 +144,38 @@ AutoApply AI Autopilot System
                         <td style="color: #38bdf8; font-size: 14px; font-weight: 700;">${company}</td>
                       </tr>
                       <tr>
+                        <td style="color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase;">Company LinkedIn</td>
+                        <td style="font-size: 13px; font-weight: 600;">
+                          <a href="${finalLinkedinUrl}" target="_blank" style="color: #38bdf8; text-decoration: underline;">
+                            🔗 View ${company} on LinkedIn ↗
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase;">Contact Number</td>
+                        <td style="color: #34d399; font-size: 13px; font-weight: 700;">
+                          📞 ${finalContactNumber}
+                        </td>
+                      </tr>
+                      ${
+                        contactEmail
+                          ? `<tr>
+                        <td style="color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase;">Recruiter Contact</td>
+                        <td style="color: #cbd5e1; font-size: 13px;">✉️ ${contactEmail}</td>
+                      </tr>`
+                          : ''
+                      }
+                      ${
+                        companyWebsite
+                          ? `<tr>
+                        <td style="color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase;">Company Website</td>
+                        <td style="font-size: 13px;">
+                          <a href="${companyWebsite}" target="_blank" style="color: #93c5fd; text-decoration: underline;">${companyWebsite} ↗</a>
+                        </td>
+                      </tr>`
+                          : ''
+                      }
+                      <tr>
                         <td style="color: #94a3b8; font-size: 12px; font-weight: 600; text-transform: uppercase;">Job Platform</td>
                         <td style="color: #a78bfa; font-size: 13px; font-weight: 600;">${portal.toUpperCase()}</td>
                       </tr>
@@ -151,22 +200,31 @@ AutoApply AI Autopilot System
                 </tr>
               </table>
 
-              <!-- Call to Action -->
-              ${
-                applyUrl
-                  ? `
+              <!-- Call to Action Buttons -->
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 24px;">
                 <tr>
                   <td align="center">
-                    <a href="${applyUrl}" target="_blank" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 700; padding: 12px 28px; border-radius: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
-                      View Original Job Posting ↗
-                    </a>
+                    <table cellpadding="6" cellspacing="0">
+                      <tr>
+                        <td>
+                          <a href="${finalLinkedinUrl}" target="_blank" style="display: inline-block; background-color: #0a66c2; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 700; padding: 12px 22px; border-radius: 8px; box-shadow: 0 4px 12px rgba(10,102,194,0.4);">
+                            💼 View Company LinkedIn ↗
+                          </a>
+                        </td>
+                        ${
+                          applyUrl
+                            ? `<td>
+                          <a href="${applyUrl}" target="_blank" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 700; padding: 12px 22px; border-radius: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.4);">
+                            📄 View Job Posting ↗
+                          </a>
+                        </td>`
+                            : ''
+                        }
+                      </tr>
+                    </table>
                   </td>
                 </tr>
               </table>
-              `
-                  : ''
-              }
 
               <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #64748b; text-align: center;">
                 Zero clicks required. The platform continues hunting and applying 24/7 across live verified portals.

@@ -26,6 +26,11 @@ export interface IJobDocument extends Document {
   skillsRequired: string[];
   benefits: string[];
   applicationUrl: string;
+  companyLinkedinUrl?: string;
+  companyWebsite?: string;
+  companyPhone?: string;
+  contactPhone?: string;
+  contactEmail?: string;
   duplicateHash: string;
   isExpired: boolean;
   discoveredAt: Date;
@@ -76,6 +81,11 @@ const JobSchema = new Schema<IJobDocument>(
     skillsRequired: [{ type: String, index: true }],
     benefits: [{ type: String }],
     applicationUrl: { type: String, required: true },
+    companyLinkedinUrl: { type: String },
+    companyWebsite: { type: String },
+    companyPhone: { type: String },
+    contactPhone: { type: String },
+    contactEmail: { type: String },
     duplicateHash: { type: String, required: true, unique: true },
     isExpired: { type: Boolean, default: false, index: true },
     discoveredAt: { type: Date, default: Date.now, index: true },

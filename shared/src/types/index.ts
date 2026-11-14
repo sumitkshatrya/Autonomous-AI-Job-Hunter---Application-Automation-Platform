@@ -138,6 +138,11 @@ export interface INormalizedJob {
   skillsRequired: string[];
   benefits?: string[];
   applicationUrl: string;
+  companyLinkedinUrl?: string;
+  companyWebsite?: string;
+  companyPhone?: string;
+  contactPhone?: string;
+  contactEmail?: string;
   duplicateHash: string;
   isExpired: boolean;
   discoveredAt: string;

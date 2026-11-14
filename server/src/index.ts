@@ -45,7 +45,7 @@ async function bootstrap() {
 
     // 🚀 Start Zero-Click 24/7 Autonomous Job Hunter & Application Engine
     const { AutonomousHunterService } = await import('./services/AutonomousHunterService');
-    AutonomousHunterService.getInstance().startAutopilotLoop(3 * 60 * 1000); // Discovers and applies 24/7 every 3 minutes
+    AutonomousHunterService.getInstance().startAutopilotLoop(10 * 60 * 1000); // Discovers and applies 24/7 every 10 minutes
   } catch (err: any) {
     logger.warn(`MongoDB initial connection notice: ${err.message}. Server running with runtime resilience.`);
   }

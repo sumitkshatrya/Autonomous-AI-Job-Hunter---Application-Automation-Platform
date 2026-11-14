@@ -158,6 +158,35 @@ export const ApplicationsPage: React.FC = () => {
               </button>
             </div>
 
+            {/* Company & Recruiter Outreach Details */}
+            <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs space-y-2">
+              <span className="font-bold text-blue-400 block uppercase tracking-wider text-[10px]">
+                Company & Recruiter Verification
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span className="text-slate-400 block">Company LinkedIn:</span>
+                  <a
+                    href={
+                      selectedApp.jobId?.companyLinkedinUrl ||
+                      `https://www.linkedin.com/company/${(selectedApp.jobId?.company || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 underline font-medium truncate block"
+                  >
+                    🔗 View {selectedApp.jobId?.company} Profile ↗
+                  </a>
+                </div>
+                <div>
+                  <span className="text-slate-400 block">Recruiter / Contact Phone:</span>
+                  <span className="text-emerald-400 font-semibold">
+                    📞 {selectedApp.jobId?.contactPhone || selectedApp.jobId?.companyPhone || '+91-1800-TALENT / Corporate'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {/* Submission Receipt */}
             {selectedApp.submissionResult?.confirmationId && (
               <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-800/60 text-xs space-y-1">

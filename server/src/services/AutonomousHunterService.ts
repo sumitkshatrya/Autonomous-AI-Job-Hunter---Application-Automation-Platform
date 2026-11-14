@@ -30,7 +30,7 @@ export class AutonomousHunterService {
 
   private isRunning: boolean = false;
   private timer: NodeJS.Timeout | null = null;
-  private intervalMs: number = 3 * 60 * 1000; // 3 minutes loop
+  private intervalMs: number = 10 * 60 * 1000; // 10 minutes loop
   private stats: AutopilotStats = {
     isRunning: false,
     lastRunAt: null,
@@ -316,6 +316,10 @@ export class AutonomousHunterService {
                         confirmationId: confirmation,
                         applyUrl: job.applicationUrl,
                         appliedAt: new Date(),
+                        companyLinkedinUrl: job.companyLinkedinUrl,
+                        contactNumber: job.contactPhone || job.companyPhone,
+                        companyWebsite: job.companyWebsite,
+                        contactEmail: job.contactEmail,
                       });
                     } catch (mailErr: any) {
                       logger.warn(`Email notification dispatch notice for ${recipientEmail}: ${mailErr.message}`);

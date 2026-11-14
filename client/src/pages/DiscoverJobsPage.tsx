@@ -248,7 +248,7 @@ export const DiscoverJobsPage: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-1 max-w-3xl leading-relaxed">
-                Single click ki zaroorat nahi hai. System background me automatically har 3 minute me worldwide platforms (LinkedIn, Naukri, Wellfound, Internshala, Indeed, WorkIndia, RemoteHunter, Greenhouse, Lever) se naye jobs dhoondhta hai, candidate profile se match karta hai, tailored application package banata hai, aur employer ATS me automatically submit kar deta hai.
+                Single click ki zaroorat nahi hai. System background me automatically har 10 minute me worldwide platforms (LinkedIn, Naukri, Wellfound, Internshala, Indeed, WorkIndia, RemoteHunter, Greenhouse, Lever) se naye jobs dhoondhta hai, candidate profile se match karta hai, tailored application package banata hai, aur employer ATS me automatically submit kar deta hai.
               </p>
             </div>
           </div>
@@ -306,7 +306,7 @@ export const DiscoverJobsPage: React.FC = () => {
             <span className="text-[11px] text-slate-400 block">Next Scheduled Run</span>
             <span className="text-xs font-medium text-blue-400 flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              <span>{autopilot.nextRunAt ? new Date(autopilot.nextRunAt).toLocaleTimeString() : 'In ~3 mins'}</span>
+              <span>{autopilot.nextRunAt ? new Date(autopilot.nextRunAt).toLocaleTimeString() : 'In ~10 mins'}</span>
             </span>
           </div>
         </div>

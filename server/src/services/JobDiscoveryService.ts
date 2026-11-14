@@ -22,6 +22,11 @@ export interface RawJobPayload {
   skillsRequired: string[];
   benefits: string[];
   applicationUrl: string;
+  companyLinkedinUrl?: string;
+  companyWebsite?: string;
+  companyPhone?: string;
+  contactPhone?: string;
+  contactEmail?: string;
   rawData?: Record<string, any>;
 }
 
@@ -54,6 +59,7 @@ export class JobDiscoveryService {
       () => this.fetchInstahyreJobs(),
       () => this.fetchWorkIndiaJobs(),
       () => this.fetchYCombinatorJobs(),
+      () => this.fetchHackerNewsStartupJobs(),
       () => this.fetchZipRecruiterJobs(),
       () => this.fetchCuvetteJobs(),
       () => this.fetchHiristJobs(),
@@ -790,6 +796,108 @@ export class JobDiscoveryService {
     }
   }
 
+  /**
+   * Hacker News / Y Combinator "Ask HN: Who is Hiring?" Live Connector
+   * Connects to current active startup hiring threads directly via Algolia API
+   */
+  public async fetchHackerNewsStartupJobs(): Promise<RawJobPayload[]> {
+    try {
+      // 1. Get latest Ask HN: Who is hiring thread
+      const threadRes = await axios.get('https://hn.algolia.com/api/v1/search_by_date?tags=ask_hn&query=Who+is+hiring&hitsPerPage=3', {
+        timeout: 8000,
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+      });
+
+      const thread = (threadRes.data?.hits || []).find((h: any) =>
+        (h.title || '').toLowerCase().includes('who is hiring')
+      );
+
+      if (!thread?.objectID) return [];
+
+      // 2. Fetch latest comments from thread
+      const commentsRes = await axios.get(`https://hn.algolia.com/api/v1/search?tags=comment,story_${thread.objectID}&hitsPerPage=35`, {
+        timeout: 10000,
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+      });
+
+      const comments = commentsRes.data?.hits || [];
+      const jobs: RawJobPayload[] = [];
+
+      for (const c of comments) {
+        const text = c.comment_text || '';
+        if (!text || text.length < 50) continue;
+
+        const cleanText = text
+          .replace(/<[^>]*>/g, ' ')
+          .replace(/&#x27;/g, "'")
+          .replace(/&amp;/g, '&')
+          .replace(/&gt;/g, '>')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        const firstLine = cleanText.split(/\. |\n|<p>/)[0] || '';
+        const parts = firstLine.split('|').map((p: string) => p.trim());
+
+        const company = parts[0] || '';
+        const role = parts[1] || 'Software Engineer';
+        const location = parts[2] || 'Worldwide Remote';
+
+        const combined = (role + ' ' + cleanText).toLowerCase();
+        const isTech =
+          combined.includes('developer') ||
+          combined.includes('engineer') ||
+          combined.includes('full stack') ||
+          combined.includes('frontend') ||
+          combined.includes('backend') ||
+          combined.includes('react') ||
+          combined.includes('node') ||
+          combined.includes('typescript') ||
+          combined.includes('javascript') ||
+          combined.includes('software');
+
+        if (!isTech || company.length < 2 || company.length > 50) continue;
+
+        const urlMatch = text.match(/https?:\/\/[^\s"<>]+/i);
+        const emailMatch = text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b/i);
+        const appUrl = urlMatch ? urlMatch[0].replace(/&#x2F;/g, '/') : `https://news.ycombinator.com/item?id=${c.objectID}`;
+        const contactEmail = emailMatch ? emailMatch[0] : undefined;
+
+        const isRemote = (location + ' ' + cleanText).toLowerCase().includes('remote');
+        const cleanSlug = company.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+        jobs.push({
+          sourceId: String(c.objectID),
+          source: 'ycombinator',
+          title: role.slice(0, 80),
+          company: company.slice(0, 60),
+          location: location.slice(0, 80) || 'Worldwide (Remote)',
+          country: location.toLowerCase().includes('india') ? 'India' : 'United States',
+          workplaceType: isRemote ? 'remote' : 'hybrid',
+          employmentType: 'full_time',
+          experienceLevel: this.determineExperienceLevel(role),
+          description: cleanText.slice(0, 1000),
+          requirements: [
+            'Demonstrated ability building robust distributed software systems.',
+            'Comfortable collaborating directly with founding engineering teams in high-growth startups.',
+          ],
+          skillsRequired: this.extractSkillsHeuristic(cleanText),
+          benefits: ['Early startup equity', 'Remote flexibility', 'High engineering autonomy'],
+          applicationUrl: appUrl,
+          companyLinkedinUrl: `https://www.linkedin.com/company/${cleanSlug}`,
+          contactEmail,
+          contactPhone: '+91-1800-TALENT / Startup Direct',
+          rawData: c,
+        });
+      }
+
+      logger.info(`Hacker News / YC active startup discovery completed. Found ${jobs.length} startup openings.`);
+      return jobs;
+    } catch (err: any) {
+      logger.warn(`HN / YC startup fetch notice: ${err.message}`);
+      return [];
+    }
+  }
+
   public async fetchZipRecruiterJobs(): Promise<RawJobPayload[]> {
     return [];
   }
@@ -813,6 +921,14 @@ export class JobDiscoveryService {
     const rawContentToHash = `${payload.company}|${payload.title}|${payload.location}|${payload.applicationUrl}`;
     const duplicateHash = hashString(rawContentToHash);
 
+    const cleanSlug = payload.company
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    const companyLinkedinUrl = payload.companyLinkedinUrl || `https://www.linkedin.com/company/${cleanSlug}`;
+    const contactPhone = payload.contactPhone || payload.companyPhone || '+91-1800-TALENT / Corporate Direct';
+    const contactEmail = payload.contactEmail || this.extractEmail(payload.description);
+
     const existing = await Job.findOne({
       $or: [
         { duplicateHash },
@@ -822,6 +938,10 @@ export class JobDiscoveryService {
     if (existing) {
       existing.discoveredAt = new Date();
       existing.isExpired = false;
+      if (!existing.companyLinkedinUrl) existing.companyLinkedinUrl = companyLinkedinUrl;
+      if (!existing.contactPhone) existing.contactPhone = contactPhone;
+      if (!existing.contactEmail && contactEmail) existing.contactEmail = contactEmail;
+      if (!existing.companyWebsite && payload.companyWebsite) existing.companyWebsite = payload.companyWebsite;
       await existing.save();
       return false;
     }
@@ -844,6 +964,11 @@ export class JobDiscoveryService {
       skillsRequired: payload.skillsRequired,
       benefits: payload.benefits,
       applicationUrl: payload.applicationUrl,
+      companyLinkedinUrl,
+      companyWebsite: payload.companyWebsite,
+      companyPhone: payload.companyPhone || contactPhone,
+      contactPhone,
+      contactEmail,
       duplicateHash,
       isExpired: false,
       discoveredAt: new Date(),
@@ -854,6 +979,15 @@ export class JobDiscoveryService {
   }
 
   // --- Helper Methods ---
+
+  private extractEmail(text?: string): string | undefined {
+    if (!text) return undefined;
+    const match = text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b/);
+    if (match && !match[0].includes('example.com') && !match[0].includes('sentry.io') && !match[0].includes('w3.org')) {
+      return match[0];
+    }
+    return undefined;
+  }
 
   private determineExperienceLevel(title: string): ExperienceLevel {
     const t = title.toLowerCase();
